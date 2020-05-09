@@ -15,3 +15,7 @@ class Config(object):
     SESSION_TYPE = 'filesystem'
 
     PERMANENT_SESSION_LIFETIME = datetime.timedelta(days = 1)
+
+    FLATPAGES_ROOT = 'blog/'
+
+    FLATPAGES_EXTENSION = '.md'

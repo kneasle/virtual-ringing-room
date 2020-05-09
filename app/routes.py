@@ -1,6 +1,6 @@
 from flask import render_template, send_from_directory, abort, flash, redirect, url_for, session, request
 from flask_login import login_user, logout_user, current_user, login_required
-from app import app, towers, log, db
+from app import app, towers, log, db, blog_posts
 from app.models import User
 from flask_login import current_user, login_user, logout_user, login_required
 from app.forms import LoginForm, RegistrationForm, UserSettingsForm
@@ -92,10 +92,6 @@ def contact():
 def donate():
     return render_template('donate.html')
 
-@app.route('/blog')
-def blog():
-    return render_template('blog.html')
-
 @app.route('/authenticate')
 def authenticate():
     login_form = LoginForm()
@@ -174,3 +170,82 @@ def user_settings():
         db.session.commit()
     return render_template('user_settings.html', form=form)
 
+
+
+# Blog
+
+
+# Helper function: Get a list of tags
+# If you give it a post, it gets the tags for just that post, else it gets all the tags for all posts
+def get_blog_tags(post=None):
+    if post and 'tags' in post.meta:
+        return (tag.strip() for tag in post.meta.get('tags').split(','))
+    return set(tag.strip() for p in blog_posts \
+               if 'tags' in p.meta and 'published' in p.meta \
+               for tag in p.meta.get('tags').split(','))
+
+# Helper function:
+# Get the n most recent post titles & dates, for use in the sidebar
+def get_recent_posts(n=10):
+    return (p for p in sorted(blog_posts, 
+                             key = lambda x: x.meta.get('published'),
+                             reverse=True)[:n]
+            )
+
+# The default "front page" view, with recent articles & snippets.
+@app.route('/blog/')
+def blog():
+
+    # First, assemble a list of all published posts
+    post_list = (p for p in blog_posts if 'published' in p.meta)
+
+    # take them in reverse chronological order
+    latest = sorted(post_list, reverse = True, key = lambda p: p.meta['published'])
+
+    # Figure out pagination
+    posts_per_page = 5
+    pagination = int(request.args.get('page') or 1) # Get the ?page= argument or just default to 1
+    start_of_range = (pagination-1)*posts_per_page 
+    end_of_range = pagination*posts_per_page
+
+    return render_template('blog_front.html', 
+                           posts=latest[start_of_range:end_of_range],
+                           recent_posts=get_recent_posts(),
+                           tags=get_blog_tags(),
+                           title='Blog')
+
+
+# Single post view
+@app.route('/blog/<string:post>')
+def blog_post(post):
+    p = blog_posts.get(post)
+    return render_template('blog_post.html',
+                           post=p,
+                           recent_posts=get_recent_posts(),
+                           tags=get_blog_tags(),
+                           title=p.meta.get('title'))
+
+# Index view
+@app.route('/blog/index')
+def blog_index():
+    posts = sorted((p for p in blog_posts if 'published' in p.meta),
+               key=lambda x: x.meta.get('published'), reverse=True)
+    tag = request.args.get('tag')
+    if tag:
+        posts = (p for p in posts if 'tags' in p.meta and tag in get_blog_tags(p))
+    return render_template('blog_index.html',
+                           posts=posts,
+                           recent_posts=get_recent_posts(),
+                           tags=get_blog_tags(),
+                           title=tag or 'Index')
+                           
+
+
+# Index view
+
+
+
+# This is necessary to serve images correctly
+@app.route('/blog/images/<path:path>')
+def redirect_blog_media(path):
+    return send_from_directory('blog/images/', path)

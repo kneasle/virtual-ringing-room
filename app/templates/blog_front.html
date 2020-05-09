@@ -1,0 +1,17 @@
+{% extends 'blog.html' %}
+
+{% block blog_content %}
+
+
+{% for post in posts %}
+
+<a href="{{post.path}}">{{post.meta.get('title')}}</a>
+<small class="text-muted">{{post.meta.get('published')}} — {{post.meta.get('author') or 'Ringing Room'}}</small>
+
+{{post.meta.get('snippet')}}
+
+<hr/>
+
+{% endfor %}
+
+{% endblock %}

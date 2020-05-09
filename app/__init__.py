@@ -9,6 +9,7 @@ from flask_socketio import SocketIO
 from flask_assets import Environment, Bundle
 from flask_session import Session
 from flask_login import LoginManager
+from flask_flatpages import FlatPages
 
 from config import Config
 import os
@@ -23,6 +24,7 @@ socketio = SocketIO(app,
                     logging=True)
 Session(app)
 login = LoginManager(app)
+blog_posts = FlatPages(app)
 
 
 # Set up logging

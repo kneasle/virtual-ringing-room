@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from app import app, socketio, db, towers
+from app import app, socketio, db, towers, blog_posts
 from app.models import TowerDB, Tower, User, UserTowerRelation
 
 
@@ -13,7 +13,8 @@ def make_shell_context():
             'User': User,
             'UserTowerRelation': UserTowerRelation,
             'u': User.query.first(),
-            't': TowerDB.query.first()}
+            't': TowerDB.query.first(),
+            'blog_posts': blog_posts}
 
 
 if __name__ == '__main__':

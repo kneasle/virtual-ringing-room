@@ -1,6 +1,40 @@
 {% extends 'base.html' %}
 
 {% block app_content %}
-A blog maybe?
+
+<div class="row">
+
+    <div class="col-12 col-md-9" id="blog_content">
+
+        {% block blog_content %} {% endblock %}
+
+    </div>
+
+    <div class="col-3 d-none d-md-block" id="blog_sidebar">
+
+    <ul class="list-group list-group-flush">
+
+    {% for post in recent_posts %}
+
+      <li class="list-group-item list-group-item-action">
+          <a href="{{post.path}}">{{post.meta.get('title')}}</a>
+      </li>
+
+    {% endfor %}
+
+
+    <h5>Tags</h5>
+
+    {% for tag in tags %}
+        
+        <a href="index?tag={{tag}}">{{tag}}</a>
+
+    {% endfor %}
+
+    </div>
+
+</div>
+
+
 
 {% endblock %}
