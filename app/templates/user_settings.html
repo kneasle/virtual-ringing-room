@@ -37,11 +37,47 @@
         </div>
     </div>
 </div>
+<div class="row my-4">
+    <div class="col-3">
+        Bell Sound:
+    </div>
+    <div class="col-3">
+        <div class="btn-group btn-block btn-group-toggle align-bottom">
+            <label class="btn btn-outline-primary" id="bell_sound_tower_settings_label">
+            <input type="radio" 
+                   name="bell_sound"
+                   id="bell_sound_tower_settings"
+                   onclick="/* $('#darkSwitch').click(); */ window.set_bell_sound_switch('tower_settings')"
+                   />
+                   Use Tower Settings
+            </label>
+
+            <label class="btn btn-outline-primary" id="bell_sound_always_tower_label">
+            <input type="radio" 
+                   name="bell_sound"
+                   id="bell_sound_always_tower"
+                   onclick="/* $('#darkSwitch').click(); */ window.set_bell_sound_switch('always_tower')"
+                   />
+                   Always Tower
+            </label>
+
+            <label class="btn btn-outline-primary" id="bell_sound_always_hand_label">
+            <input type="radio" 
+                   name="bell_sound"
+                   id="bell_sound_always_hand"
+                   onclick="/* $('#darkSwitch').click(); */ window.set_bell_sound_switch('always_hand')"
+                   />
+                   Always Hand
+            </label>
+        </div>
+    </div>
+</div>
 
 
 <input type="checkbox" class="d-none" id="darkSwitch" />
 <script src="static/dark-mode-switch/dark-mode-switch.min.js"></script>
 <script>
+    // Dark mode switch
     window.toggle_dark_switch = function(){
         $('#dark_true_label').toggleClass('active');
         $('#dark_false_label').toggleClass('active');
@@ -54,6 +90,26 @@
             $('#dark_false_label').addClass('active');
         }
     });
+
+    // Bell sound switch
+    window.set_bell_sound_switch = function(new_state){
+        $('#bell_sound_tower_settings_label').removeClass('active');
+        $('#bell_sound_always_tower_label').removeClass('active');
+        $('#bell_sound_always_hand_label').removeClass('active');
+
+        if ( new_state === 'tower_settings') {
+            console.log("Setting to tower settings");
+            $('#bell_sound_tower_settings_label').addClass('active');
+        } else if ( new_state === 'always_tower') {
+            console.log("Setting to always tower");
+            $('#bell_sound_always_tower_label').addClass('active');
+        } else if ( new_state === 'always_hand') {
+            console.log("Setting to always hand");
+            $('#bell_sound_always_hand_label').addClass('active');
+        } else {
+            console.error("Unknown bell sound state:" + new_state);
+        }
+    };
 </script>
 
 <small class="form-text text-muted">
